@@ -14,6 +14,16 @@ useHead({ title: "Sign in" });
 
 const redirectTarget = computed(() => safeRedirectPath(route.query.redirect));
 
+/**
+ * Post-reset confirmation. The password reset page redirects here so the
+ * success message survives the navigation without a query-only notice system.
+ */
+const notice = computed(() =>
+  route.query.reset === "1"
+    ? "Your password has been reset. Sign in with your new password."
+    : null,
+);
+
 async function submit() {
   if (submitting.value) return;
 
@@ -32,14 +42,14 @@ async function submit() {
 </script>
 
 <template>
-  <div class="mt-8 text-center">
-    <h1 class="text-2xl font-semibold tracking-tight text-default-900">
-      Welcome back
-    </h1>
-    <p class="mt-2 text-sm text-default-500">
-      Sign in to your private Xibra dashboard.
-    </p>
-  </div>
+  <AppAuthHeading
+    title="Welcome back"
+    subtitle="Sign in to your private Xibra dashboard."
+  />
+
+  <AppAlert v-if="notice && !error" tone="success" class="mt-6 text-left">
+    {{ notice }}
+  </AppAlert>
 
   <AppAlert v-if="error" tone="error" class="mt-6 text-left">
     {{ error.message }}
@@ -68,6 +78,15 @@ async function submit() {
       :error="fieldError(error, 'password')"
       required
     />
+
+    <p class="text-right">
+      <NuxtLink
+        to="/forgot-password"
+        class="text-xs font-medium text-primary hover:underline"
+      >
+        Forgot your password?
+      </NuxtLink>
+    </p>
 
     <AppButton type="submit" block :loading="submitting">
       {{ submitting ? "Signing in…" : "Sign in" }}

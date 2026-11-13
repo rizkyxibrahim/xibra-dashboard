@@ -58,6 +58,31 @@ Browser  --same-origin /api/**-->  Nuxt server  --Bearer token-->  Xibra API
 - Non-GET BFF requests require an `Origin` header that matches `Host`.
 - Only the API is authoritative for authentication, authorization, and ownership.
 
+## Public Auth & Onboarding Pages
+
+The invitation-only onboarding flow and the account recovery flows are served by the dashboard, so every link the API sends points here.
+
+| Route | Purpose | Token source |
+|---|---|---|
+| `/invite/[token]` | Validates an invitation link or code and opens an onboarding session. | Path segment from the invitation link. |
+| `/onboarding` | Collects name, username, optional email and phone, and the password; then creates the account and signs in. | Onboarding cookie. |
+| `/forgot-password` | Requests a password reset link. | None. |
+| `/reset-password?token=…` | Consumes the reset token and sets a new password. | Query string from the email link. |
+| `/verify-email?token=…` | Consumes an email verification token. | Query string from the email link. |
+
+The onboarding session token returned by `POST /invitations/redeem` never reaches the browser. It lives in a second sealed httpOnly cookie (`xibra_onboarding`, 15 minutes) that only `server/api/onboarding/complete.post.ts` reads. The cookie is cleared on success and whenever the API reports the session as invalid, expired, or consumed, so the page settles on its expired state instead of looping.
+
+API configuration that must point at these routes:
+
+```env
+XIBRA_INVITATION_LINK_BASE_URL=http://localhost:3000
+XIBRA_PASSWORD_RESET_URL=http://localhost:3000/reset-password
+XIBRA_EMAIL_VERIFICATION_URL=http://localhost:3000/verify-email
+```
+
+The invitation URL is `{XIBRA_INVITATION_LINK_BASE_URL}/invite/{token}`; the reset and verification URLs receive `?token=` appended by the API.
+
+Password recovery only works for accounts with a verified email address. Unverified accounts can request a new verification link from the overview page.
 
 ## Architecture
 
@@ -170,16 +195,20 @@ xibra-dashboard/
 │   ├── assets/css/          # Tailwind entry, design tokens, component classes
 │   ├── components/          # App* UI primitives
 │   ├── composables/         # useAuth, useShell, useNavigation
-│   ├── layouts/             # default (private shell), auth (login card)
+│   ├── layouts/             # default (private shell), auth (public card)
 │   ├── middleware/          # auth, guest
-│   ├── pages/               # index (overview), login
+│   ├── pages/               # index, login, invite/[token], onboarding,
+│   │                        # forgot-password, reset-password, verify-email
 │   ├── utils/               # api error helpers, formatting, icon set
 │   ├── app.vue
 │   └── error.vue
 ├── public/
 ├── server/
-│   ├── api/auth/            # login, me, logout BFF routes
-│   └── utils/               # xibra-api client, session, BFF helpers
+│   ├── api/auth/            # login, me, logout, forgot/reset password,
+│   │                        # email verify + resend BFF routes
+│   ├── api/invitations/     # invitation redemption BFF route
+│   ├── api/onboarding/      # onboarding session + completion BFF routes
+│   └── utils/               # xibra-api client, session, onboarding session, BFF helpers
 ├── .env.example
 ├── .gitignore
 ├── nuxt.config.ts

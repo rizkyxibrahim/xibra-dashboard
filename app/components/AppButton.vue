@@ -5,6 +5,7 @@ const props = withDefaults(
   defineProps<{
     type?: "button" | "submit";
     variant?: "primary" | "secondary" | "ghost";
+    size?: "sm" | "md";
     loading?: boolean;
     disabled?: boolean;
     block?: boolean;
@@ -12,6 +13,7 @@ const props = withDefaults(
   {
     type: "button",
     variant: "primary",
+    size: "md",
     loading: false,
     disabled: false,
     block: false,
@@ -27,10 +29,16 @@ const variants = {
     "text-default-600 hover:bg-default-100 hover:text-default-900 focus-visible:ring-default-400/40",
 } as const;
 
+const sizes = {
+  sm: "px-3 py-1.5 text-xs",
+  md: "px-4 py-2 text-sm",
+} as const;
+
 const classes = computed(() => [
   "btn",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
   variants[props.variant],
+  sizes[props.size],
   props.block ? "w-full" : "",
 ]);
 </script>

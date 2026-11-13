@@ -108,7 +108,13 @@ export async function callXibraApi<T>(
     envelope?.code || `HTTP_${status}`,
     envelope?.message || defaultMessage(status),
     {
-      fields: status === 422 ? extractFields(envelope?.data) : undefined,
+      // docs/api/conventions.md section 5: field-level validation errors
+      // travel in `meta.errors`. `data` is checked as a fallback so a future
+      // envelope change cannot silently drop them again.
+      fields:
+        status === 422
+          ? extractFields(envelope?.meta, envelope?.data)
+          : undefined,
       retryAfter: parseRetryAfter(response.headers.get("retry-after")),
     },
   );
@@ -124,10 +130,17 @@ function isEnvelope(value: unknown): value is ApiEnvelope<unknown> {
   );
 }
 
-function extractFields(data: unknown): Record<string, string[]> | undefined {
-  if (typeof data !== "object" || data === null) return undefined;
+function extractFields(
+  meta: unknown,
+  data: unknown,
+): Record<string, string[]> | undefined {
+  return readErrors(meta) ?? readErrors(data);
+}
 
-  const errors = (data as { errors?: unknown }).errors;
+function readErrors(value: unknown): Record<string, string[]> | undefined {
+  if (typeof value !== "object" || value === null) return undefined;
+
+  const errors = (value as { errors?: unknown }).errors;
   if (typeof errors !== "object" || errors === null) return undefined;
 
   const fields: Record<string, string[]> = {};

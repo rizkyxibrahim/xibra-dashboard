@@ -13,6 +13,38 @@ const greeting = computed(() => {
 const roleLabels = computed(
   () => user.value?.roles.map((role) => role.label).join(", ") || "Member",
 );
+
+const resending = ref(false);
+const resendFeedback = ref<{
+  tone: "success" | "error";
+  message: string;
+} | null>(null);
+
+async function resendVerification() {
+  if (resending.value) return;
+
+  resending.value = true;
+  resendFeedback.value = null;
+
+  try {
+    await $fetch("/api/auth/email/resend", { method: "POST" });
+    resendFeedback.value = {
+      tone: "success",
+      message: "Verification link sent. Check your inbox.",
+    };
+  } catch (cause) {
+    const payload = toApiError(cause);
+
+    resendFeedback.value = {
+      tone: "error",
+      message: payload.retryAfter
+        ? `${payload.message} Try again in ${payload.retryAfter} seconds.`
+        : payload.message,
+    };
+  } finally {
+    resending.value = false;
+  }
+}
 </script>
 
 <template>
@@ -88,6 +120,32 @@ const roleLabels = computed(
             </dd>
           </div>
         </dl>
+        <div v-if="user.email && !user.emailVerifiedAt" class="card-footer">
+          <div class="min-w-0">
+            <p class="text-xs text-default-400">
+              Password recovery needs a verified email.
+            </p>
+            <p
+              v-if="resendFeedback"
+              class="mt-1 text-xs"
+              :class="
+                resendFeedback.tone === 'success'
+                  ? 'text-success'
+                  : 'text-danger'
+              "
+            >
+              {{ resendFeedback.message }}
+            </p>
+          </div>
+          <AppButton
+            variant="secondary"
+            size="sm"
+            :loading="resending"
+            @click="resendVerification"
+          >
+            {{ resending ? "Sending…" : "Resend link" }}
+          </AppButton>
+        </div>
       </article>
 
       <article class="card">
