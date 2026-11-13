@@ -32,7 +32,7 @@ const sessionConfig: SessionConfig = {
   maxAge: SESSION_MAX_AGE_SECONDS,
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: !import.meta.dev,
     sameSite: "lax",
     path: "/",
   },

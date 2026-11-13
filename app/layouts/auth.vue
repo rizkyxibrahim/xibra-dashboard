@@ -1,21 +1,34 @@
 <template>
-    <div class="relative flex min-h-screen flex-col bg-slate-50">
-        <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-linear-to-b from-brand-100/70 to-transparent"
-            aria-hidden="true" />
-
-        <header class="relative z-10 flex items-center justify-between px-6 py-6 sm:px-10">
-            <AppLogo />
-            <span class="text-xs font-medium uppercase tracking-wider text-slate-400">Private access</span>
-        </header>
-
-        <main class="relative z-10 flex flex-1 items-start justify-center px-6 pb-16 pt-4 sm:items-center sm:pt-0">
-            <div class="w-full max-w-md">
-                <slot />
-            </div>
-        </main>
-
-        <footer class="relative z-10 px-6 pb-6 text-center text-xs text-slate-400">
-            Xibra Platform · Invitation-only access
-        </footer>
+  <div
+    class="relative flex min-h-screen items-center justify-center overflow-hidden bg-body-bg px-4 py-12"
+  >
+    <div class="absolute inset-0" aria-hidden="true">
+      <svg
+        class="absolute inset-0 size-full fill-default-900/[0.03] stroke-default-900/[0.06] dark:fill-white/[0.03] dark:stroke-white/[0.06]"
+      >
+        <defs>
+          <pattern
+            id="authPattern"
+            width="56"
+            height="56"
+            patternUnits="userSpaceOnUse"
+            x="50%"
+            y="16"
+          >
+            <path d="M.5 56V.5H72" fill="none" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" stroke-width="0" fill="url(#authPattern)" />
+      </svg>
     </div>
+
+    <div class="card relative z-10 w-full max-w-md">
+      <div class="px-7 py-10 sm:px-9">
+        <div class="flex justify-center">
+          <AppLogo />
+        </div>
+        <slot />
+      </div>
+    </div>
+  </div>
 </template>

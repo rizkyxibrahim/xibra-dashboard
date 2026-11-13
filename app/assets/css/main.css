@@ -1,29 +1,22 @@
 @import "tailwindcss";
 
-@theme {
-  --font-sans:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-
-  --color-brand-50: #eef2ff;
-  --color-brand-100: #e0e7ff;
-  --color-brand-200: #c7d2fe;
-  --color-brand-500: #6366f1;
-  --color-brand-600: #4f46e5;
-  --color-brand-700: #4338ca;
-
-  --radius-card: 1rem;
-}
+@import "./themes.css";
+@import "./components.css";
 
 @layer base {
-  html {
+  :root {
     color-scheme: light;
   }
 
   body {
-    @apply bg-slate-50 font-sans text-slate-900 antialiased;
+    @apply bg-body-bg font-sans text-body-color antialiased;
   }
 
   ::selection {
-    @apply bg-brand-100 text-brand-700;
+    @apply bg-primary/15 text-primary;
+  }
+
+  [data-theme="dark"] {
+    color-scheme: dark;
   }
 }

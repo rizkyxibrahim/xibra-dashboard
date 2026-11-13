@@ -1,11 +1,16 @@
+import type { IconName } from "~/utils/icons";
+
 export type NavigationItem = {
   label: string;
   to: string;
+  icon: IconName;
   /** Role names allowed to see the item. Omit for every authenticated user. */
   roles?: string[];
 };
 
-const items: NavigationItem[] = [{ label: "Overview", to: "/" }];
+const items: NavigationItem[] = [
+  { label: "Overview", to: "/", icon: "dashboard" },
+];
 
 /**
  * Role-aware navigation.

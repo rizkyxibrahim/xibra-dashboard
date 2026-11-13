@@ -1,0 +1,71 @@
+/*
+ * Shared component classes.
+ *
+ * Only the pieces the dashboard actually uses are ported from the template.
+ * Demo-only styles (charts, calendar, flatpickr, dropzone, print, RTL) are not
+ * included, so there is no dead CSS and no dependency on Preline variants.
+ */
+@layer components {
+  .card {
+    @apply rounded-xl border border-default-200 bg-card shadow-sm;
+  }
+
+  .card-header {
+    @apply flex items-center justify-between gap-3 border-b border-default-200 px-5 py-4;
+  }
+
+  .card-body {
+    @apply p-5;
+  }
+
+  .card-footer {
+    @apply flex items-center justify-between gap-3 border-t border-default-200 px-5 py-4;
+  }
+
+  .card-title {
+    @apply text-base font-semibold text-default-900;
+  }
+
+  .btn {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-transparent px-4 py-2 text-sm font-medium transition-colors;
+  }
+
+  .btn:disabled {
+    @apply cursor-not-allowed opacity-60;
+  }
+
+  .btn-icon {
+    @apply size-9 p-0;
+  }
+
+  .form-label {
+    @apply mb-1.5 block text-sm font-medium text-default-800;
+  }
+
+  .form-input {
+    @apply block h-10 w-full rounded-lg border border-default-300 bg-card px-3 text-sm text-default-900 shadow-sm transition-colors;
+    @apply placeholder:text-default-400;
+    @apply focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20;
+    @apply disabled:cursor-not-allowed disabled:opacity-70;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold;
+  }
+
+  .menu-link {
+    @apply flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-default-600 transition-colors;
+  }
+
+  .menu-link:hover {
+    @apply bg-default-100 text-default-900;
+  }
+
+  .menu-link-active {
+    @apply bg-primary/10 text-primary;
+  }
+
+  .menu-link-active:hover {
+    @apply bg-primary/15 text-primary;
+  }
+}

@@ -69,7 +69,7 @@ export async function callXibraApi<T>(
   let response: {
     status: number;
     ok: boolean;
-    _data: unknown;
+    _data?: unknown;
     headers: Headers;
   };
 

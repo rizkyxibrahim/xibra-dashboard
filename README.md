@@ -34,6 +34,31 @@ The dashboard communicates exclusively with `xibra-api`. It does not connect dir
 
 > Exact package versions and additional dependencies are defined in `package.json`.
 
+## UI Shell
+
+The visual shell is adapted from the Tailwick Nuxt template (Themesdesign), reduced to the parts the dashboard actually uses. The template is not open source; review the purchased template license before publishing or redistributing this repository.
+
+Deliberate changes from the template:
+
+- Demo pages, mock data, charts, calendar, mail, chat, e-commerce, HR, and invoice modules are not included.
+- Preline, Pinia, `pinia-plugin-persistedstate`, ApexCharts, Chart.js, FullCalendar, Swiper, Flatpickr, Dropzone, and Simplebar are not installed.
+- Icons are a small inline SVG set in `app/utils/icons.ts`; no runtime icon lookups over the network.
+- Fonts use the system font stack; there is no Google Fonts request.
+- The theme is stored in the readable `xibra_theme` cookie so the `data-theme` attribute can be rendered on the server without a flash. It contains no secrets.
+- Authentication state stays in the sealed httpOnly `xibra_session` cookie. Nothing auth-related is written to `localStorage`, Pinia, or a JavaScript-readable cookie.
+
+## Request Flow (BFF)
+
+```text
+Browser  --same-origin /api/**-->  Nuxt server  --Bearer token-->  Xibra API
+```
+
+- The browser never receives the API token.
+- `server/api/auth/*` reads and writes the sealed session cookie.
+- Non-GET BFF requests require an `Origin` header that matches `Host`.
+- Only the API is authoritative for authentication, authorization, and ownership.
+
+
 ## Architecture
 
 ```text
@@ -104,8 +129,10 @@ Copy-Item .env.example .env
 Configure the API base URL:
 
 ```env
-NUXT_PUBLIC_API_BASE=http://localhost:8000/api/v1
+NUXT_XIBRA_API_BASE_URL=http://127.0.0.1:8000
 ```
+
+`NUXT_XIBRA_API_BASE_URL` is server-only. The BFF appends `/api/v1`, so the value must not include it. Do not rename it to a `NUXT_PUBLIC_*` variable: public runtime config is serialized into the HTML payload, and the browser never needs to know or reach the API directly.
 
 Use the actual environment variable names defined by the application configuration. Never commit secrets or environment-specific credentials.
 
@@ -140,15 +167,19 @@ The following is the intended organizational structure. Actual directories may e
 ```text
 xibra-dashboard/
 ├── app/
-│   ├── assets/
-│   ├── components/
-│   ├── composables/
-│   ├── layouts/
-│   ├── middleware/
-│   ├── pages/
-│   └── types/
+│   ├── assets/css/          # Tailwind entry, design tokens, component classes
+│   ├── components/          # App* UI primitives
+│   ├── composables/         # useAuth, useShell, useNavigation
+│   ├── layouts/             # default (private shell), auth (login card)
+│   ├── middleware/          # auth, guest
+│   ├── pages/               # index (overview), login
+│   ├── utils/               # api error helpers, formatting, icon set
+│   ├── app.vue
+│   └── error.vue
 ├── public/
 ├── server/
+│   ├── api/auth/            # login, me, logout BFF routes
+│   └── utils/               # xibra-api client, session, BFF helpers
 ├── .env.example
 ├── .gitignore
 ├── nuxt.config.ts
