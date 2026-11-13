@@ -17,12 +17,7 @@ export const iconSet = {
   menu: { paths: ["M4 6h16", "M4 12h16", "M4 18h16"] },
   close: { paths: ["M18 6 6 18", "m6 6 12 12"] },
   dashboard: {
-    paths: [
-      "M3 3h8v8H3z",
-      "M13 3h8v5h-8z",
-      "M13 10h8v11h-8z",
-      "M3 13h8v8H3z",
-    ],
+    paths: ["M3 3h8v8H3z", "M13 3h8v5h-8z", "M13 10h8v11h-8z", "M3 13h8v8H3z"],
   },
   sun: {
     paths: [
@@ -60,6 +55,11 @@ export const iconSet = {
   },
   shield: { paths: ["M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"] },
   check: { paths: ["M20 6 9 17l-5-5"] },
+  activity: { paths: ["M22 12h-4l-3 9L9 3l-3 9H2"] },
+  clock: {
+    paths: ["M12 6v6l4 2"],
+    circles: [{ cx: 12, cy: 12, r: 10 }],
+  },
 } satisfies Record<string, IconDefinition>;
 
 export type IconName = keyof typeof iconSet;

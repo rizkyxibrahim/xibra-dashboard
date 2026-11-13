@@ -9,6 +9,7 @@ export type ApiUser = {
   is_active: boolean;
   email_verified_at: string | null;
   last_login_at: string | null;
+  created_at: string | null;
   roles: Array<{ name: string; label: string }>;
 };
 

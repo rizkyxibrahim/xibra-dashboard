@@ -4,6 +4,11 @@ const dateTimeFormatter = new Intl.DateTimeFormat("en", {
   timeZone: "UTC",
 });
 
+const dateFormatter = new Intl.DateTimeFormat("en", {
+  dateStyle: "medium",
+  timeZone: "UTC",
+});
+
 export function formatDateTime(value: string | null): string {
   if (!value) return "Not available";
 
@@ -11,6 +16,15 @@ export function formatDateTime(value: string | null): string {
   if (Number.isNaN(date.getTime())) return "Not available";
 
   return `${dateTimeFormatter.format(date)} UTC`;
+}
+
+export function formatDate(value: string | null | undefined): string {
+  if (!value) return "Not available";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Not available";
+
+  return dateFormatter.format(date);
 }
 
 /**

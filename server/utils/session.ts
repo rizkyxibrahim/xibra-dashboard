@@ -14,6 +14,7 @@ export type SessionUser = {
   roles: Array<{ name: string; label: string }>;
   emailVerifiedAt: string | null;
   lastLoginAt: string | null;
+  createdAt: string | null;
 };
 
 export type XibraSession = {
@@ -48,6 +49,7 @@ export function toSessionUser(user: ApiUser): SessionUser {
     roles: user.roles.map((role) => ({ name: role.name, label: role.label })),
     emailVerifiedAt: user.email_verified_at,
     lastLoginAt: user.last_login_at,
+    createdAt: user.created_at ?? null,
   };
 }
 
