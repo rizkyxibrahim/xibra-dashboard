@@ -3,20 +3,22 @@ import { computed } from "vue";
 
 const props = withDefaults(
   defineProps<{
-    tone?: "error" | "info" | "success";
+    tone?: "error" | "info" | "success" | "warning";
     title?: string;
   }>(),
   { tone: "info" },
 );
 
+/** Tinted surfaces taken from the template's highlight-card palette. */
 const tones = {
-  error: "border-danger/20 bg-danger/5 text-danger",
-  info: "border-default-200 bg-default-100 text-default-700",
-  success: "border-success/20 bg-success/5 text-success",
+  error: "border-danger/20 bg-danger/10 text-danger",
+  info: "border-info/20 bg-info/10 text-info",
+  success: "border-success/20 bg-success/10 text-success",
+  warning: "border-warning/20 bg-warning/10 text-warning",
 } as const;
 
 const classes = computed(() => [
-  "rounded-lg border px-4 py-3 text-sm",
+  "rounded-md border px-4 py-3 text-sm",
   tones[props.tone],
 ]);
 </script>

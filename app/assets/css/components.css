@@ -1,17 +1,10 @@
-/*
- * Shared component classes.
- *
- * Only the pieces the dashboard actually uses are ported from the template.
- * Demo-only styles (charts, calendar, flatpickr, dropzone, print, RTL) are not
- * included, so there is no dead CSS and no dependency on Preline variants.
- */
 @layer components {
   .card {
-    @apply rounded-xl border border-default-200 bg-card shadow-sm;
+    @apply relative flex flex-col break-words rounded-[0.3rem] bg-card shadow-sm;
   }
 
   .card-header {
-    @apply flex items-center justify-between gap-3 border-b border-default-200 px-5 py-4;
+    @apply flex min-h-14 items-center justify-between gap-3 border-b border-default-200 px-5;
   }
 
   .card-body {
@@ -19,23 +12,27 @@
   }
 
   .card-footer {
-    @apply flex items-center justify-between gap-3 border-t border-default-200 px-5 py-4;
+    @apply flex min-h-14 items-center justify-between gap-3 border-t border-default-200 px-5 py-3;
   }
 
   .card-title {
-    @apply text-base font-semibold text-default-900;
+    @apply text-base font-semibold text-default-800;
   }
 
   .btn {
-    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-transparent px-4 py-2 text-sm font-medium transition-colors;
+    @apply inline-flex cursor-pointer items-center justify-center gap-x-2 rounded border border-transparent px-4 py-1.75 text-center text-sm font-medium transition-all;
   }
 
-  .btn:disabled {
-    @apply cursor-not-allowed opacity-60;
+  .btn-sm {
+    @apply px-3.5 py-1.5 text-xs;
   }
 
   .btn-icon {
     @apply size-9 p-0;
+  }
+
+  .btn:disabled {
+    @apply cursor-not-allowed opacity-60;
   }
 
   .form-label {
@@ -67,5 +64,17 @@
 
   .menu-link-active:hover {
     @apply bg-primary/15 text-primary;
+  }
+
+  .table-card {
+    @apply overflow-hidden rounded-[0.3rem] bg-card shadow-sm;
+  }
+
+  .table-head {
+    @apply bg-default-100 text-left text-xs font-semibold uppercase tracking-widest text-default-500;
+  }
+
+  .table-cell {
+    @apply px-5 py-3.5 text-sm text-default-700;
   }
 }
