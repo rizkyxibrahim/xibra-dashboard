@@ -31,8 +31,15 @@ const roleLabels = computed(
   () => user.value?.roles.map((role) => role.label).join(", ") || "Member",
 );
 
-const memberSince = computed(() => "Not available");
+const memberSince = computed(() => formatDate(user.value?.createdAt));
 
+const emailFooter = computed(() => {
+  if (!user.value?.email) return "Add an email to enable password recovery.";
+
+  return user.value.emailVerifiedAt
+    ? "Verification completed."
+    : "Verification pending.";
+});
 const needsVerification = computed(
   () => Boolean(user.value?.email) && !user.value?.emailVerifiedAt,
 );
@@ -72,7 +79,8 @@ async function resendVerification() {
       </p>
     </AppAlert>
 
-    <section class="card">
+    <!-- Welcome banner: tinted card, matching the template's highlight cards. -->
+    <section class="card overflow-hidden bg-primary/10">
       <div class="card-body flex flex-wrap items-center justify-between gap-4">
         <div>
           <p class="text-xs font-semibold uppercase tracking-widest text-primary">
@@ -81,73 +89,68 @@ async function resendVerification() {
           <h2 class="mt-1 text-2xl font-semibold tracking-tight text-default-900">
             {{ greeting }}
           </h2>
-          <p class="mt-1 text-sm text-default-500">
+          <p class="mt-1 text-sm text-default-700">
             Last sign-in {{ formatDateTime(user.lastLoginAt) }}
           </p>
         </div>
-        <span class="badge bg-primary/10 text-primary">{{ roleLabels }}</span>
+        <span class="badge bg-primary text-white">{{ roleLabels }}</span>
       </div>
     </section>
 
-    <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-      <article class="card">
-        <div class="card-body">
-          <div class="flex items-center justify-between">
-            <p class="text-xs font-medium uppercase tracking-widest text-default-400">
-              Email
-            </p>
-            <AppIcon name="mail" class="size-4 text-default-400" />
+    <!-- Summary cards share one structure, so every footer line lines up. -->
+    <section class="grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
+      <article class="card h-full overflow-hidden bg-success/15">
+        <div class="card-body relative flex h-full flex-col">
+          <AppIcon name="mail" class="absolute -end-10 top-0 size-32 text-success/10" />
+          <div class="btn btn-icon size-12 bg-success text-white">
+            <AppIcon name="mail" class="size-6" />
           </div>
-          <p class="mt-3 truncate text-sm font-medium text-default-900">
+          <h5 class="mt-5 mb-2 truncate text-lg font-semibold text-default-900">
             {{ user.email ?? "Not provided" }}
-          </p>
-          <p v-if="user.email" class="mt-2">
-            <span class="badge" :class="user.emailVerifiedAt
-              ? 'bg-success/10 text-success'
-              : 'bg-warning/10 text-warning'
-              ">
-              {{ user.emailVerifiedAt ? "Verified" : "Not verified" }}
-            </span>
+          </h5>
+          <p class="text-sm text-default-700">Email</p>
+          <p class="mt-auto flex min-h-8 items-center gap-2 pt-3 text-xs text-default-600">
+            <AppIcon v-if="user.email" :name="user.emailVerifiedAt ? 'check' : 'shield'" class="size-4 shrink-0"
+              :class="user.emailVerifiedAt ? 'text-success' : 'text-warning'" />
+            <span class="truncate">{{ emailFooter }}</span>
           </p>
         </div>
       </article>
 
-      <article class="card">
-        <div class="card-body">
-          <div class="flex items-center justify-between">
-            <p class="text-xs font-medium uppercase tracking-widest text-default-400">
-              Role
-            </p>
-            <AppIcon name="shield" class="size-4 text-default-400" />
+      <article class="card h-full overflow-hidden bg-secondary/15">
+        <div class="card-body relative flex h-full flex-col">
+          <AppIcon name="shield" class="absolute -end-10 top-0 size-32 text-secondary/10" />
+          <div class="btn btn-icon size-12 bg-secondary text-white">
+            <AppIcon name="shield" class="size-6" />
           </div>
-          <p class="mt-3 text-sm font-medium text-default-900">
+          <h5 class="mt-5 mb-2 truncate text-lg font-semibold text-default-900">
             {{ roleLabels }}
-          </p>
-          <p class="mt-2 text-xs text-default-500">
-            Assigned by invitation; only the platform owner can change it.
+          </h5>
+          <p class="text-sm text-default-700">Role</p>
+          <p class="mt-auto flex min-h-8 items-center pt-3 text-xs text-default-600">
+            <span class="truncate">Assigned by invitation.</span>
           </p>
         </div>
       </article>
 
-      <article class="card">
-        <div class="card-body">
-          <div class="flex items-center justify-between">
-            <p class="text-xs font-medium uppercase tracking-widest text-default-400">
-              Member since
-            </p>
-            <AppIcon name="clock" class="size-4 text-default-400" />
+      <article class="card h-full overflow-hidden bg-info/15">
+        <div class="card-body relative flex h-full flex-col">
+          <AppIcon name="clock" class="absolute -end-10 top-0 size-32 text-info/10" />
+          <div class="btn btn-icon size-12 bg-info text-white">
+            <AppIcon name="clock" class="size-6" />
           </div>
-          <p class="mt-3 text-sm font-medium text-default-900">
+          <h5 class="mt-5 mb-2 truncate text-lg font-semibold text-default-900">
             {{ memberSince }}
-          </p>
-          <p class="mt-2 text-xs text-default-500">
-            Username <strong>@{{ user.username }}</strong>
+          </h5>
+          <p class="text-sm text-default-700">Member since</p>
+          <p class="mt-auto flex min-h-8 items-center pt-3 text-xs text-default-600">
+            <span class="truncate">Username <strong>@{{ user.username }}</strong></span>
           </p>
         </div>
       </article>
     </section>
 
-    <section class="grid gap-4 xl:grid-cols-3">
+    <section class="grid gap-5 xl:grid-cols-3">
       <article class="card xl:col-span-2">
         <div class="card-header">
           <div>

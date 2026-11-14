@@ -7,6 +7,7 @@ export type AuthUser = {
   roles: Array<{ name: string; label: string }>;
   emailVerifiedAt: string | null;
   lastLoginAt: string | null;
+  createdAt: string | null;
 };
 
 export function useAuthUser() {
