@@ -10,6 +10,13 @@ export type NavigationItem = {
 
 const items: NavigationItem[] = [
   { label: "Overview", to: "/", icon: "dashboard" },
+  { label: "Account", to: "/account", icon: "user" },
+  {
+    label: "Invitations",
+    to: "/invitations",
+    icon: "user-plus",
+    roles: ["owner"],
+  },
 ];
 
 /**
