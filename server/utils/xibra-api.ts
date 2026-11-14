@@ -21,8 +21,20 @@ type ApiEnvelope<T> = {
   meta: Record<string, unknown> | null;
 };
 
+export type ApiPageMeta = {
+  current_page: number;
+  per_page: number;
+  total: number;
+  last_page: number;
+};
+
+export type ApiPage<T> = {
+  items: T[];
+  meta: ApiPageMeta;
+};
+
 type CallOptions = {
-  method?: "GET" | "POST" | "DELETE";
+  method?: "GET" | "POST" | "PATCH" | "DELETE";
   token?: string;
   body?: Record<string, unknown>;
 };
@@ -60,10 +72,46 @@ export class XibraApiError extends Error {
   }
 }
 
+/**
+ * Call the API and return the envelope's `data`.
+ */
 export async function callXibraApi<T>(
   path: string,
   options: CallOptions = {},
 ): Promise<T> {
+  const envelope = await requestEnvelope<T>(path, options);
+
+  return envelope.data;
+}
+
+/**
+ * Call a paginated API collection and return its items with `meta`.
+ * Use this for list endpoints; `callXibraApi` drops the pagination meta.
+ */
+export async function callXibraApiPage<T>(
+  path: string,
+  options: CallOptions = {},
+): Promise<ApiPage<T>> {
+  const envelope = await requestEnvelope<T[]>(path, options);
+
+  if (!envelope.meta) {
+    throw new XibraApiError(
+      502,
+      "API_BAD_RESPONSE",
+      "The Xibra API returned an unexpected response.",
+    );
+  }
+
+  return {
+    items: envelope.data,
+    meta: envelope.meta as ApiPageMeta,
+  };
+}
+
+async function requestEnvelope<T>(
+  path: string,
+  options: CallOptions,
+): Promise<ApiEnvelope<T>> {
   const baseUrl = useRuntimeConfig().xibraApiBaseUrl.replace(/\/+$/, "");
   const url = `${baseUrl}/api/v1${path.startsWith("/") ? path : `/${path}`}`;
 
@@ -99,7 +147,7 @@ export async function callXibraApi<T>(
   const envelope = isEnvelope(payload) ? payload : undefined;
 
   if (response.ok && envelope?.success === true) {
-    return envelope.data as T;
+    return envelope as ApiEnvelope<T>;
   }
 
   const status = response.status;
