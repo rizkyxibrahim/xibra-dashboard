@@ -1,21 +1,21 @@
-const dateTimeFormatter = new Intl.DateTimeFormat("en", {
+const dateTimeFormatter = new Intl.DateTimeFormat("en-GB", {
   dateStyle: "medium",
   timeStyle: "short",
-  timeZone: "UTC",
+  timeZone: "Asia/Jakarta",
 });
 
-const dateFormatter = new Intl.DateTimeFormat("en", {
+const dateFormatter = new Intl.DateTimeFormat("en-GB", {
   dateStyle: "medium",
-  timeZone: "UTC",
+  timeZone: "Asia/Jakarta",
 });
 
-export function formatDateTime(value: string | null): string {
+export function formatDateTime(value: string | null | undefined): string {
   if (!value) return "Not available";
 
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "Not available";
 
-  return `${dateTimeFormatter.format(date)} UTC`;
+  return `${dateTimeFormatter.format(date)} WIB`;
 }
 
 export function formatDate(value: string | null | undefined): string {
